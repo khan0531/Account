@@ -1,14 +1,14 @@
 package com.example.account.config;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import redis.embedded.RedisServer;
 
 @Configuration
 public class LocalRedisConfig {
-  @Value("${spring.redis.host}")
+  @Value("${spring.redis.port}")
   private int redisPort;
 
   private RedisServer redisServer;
