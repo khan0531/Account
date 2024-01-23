@@ -66,4 +66,34 @@ class AccountServiceTest {
     assertEquals("1000000013", captor.getValue().getAccountNumber());
   }
 
+  @Test
+  void createFirstAccount() {
+    //given
+    AccountUser user = AccountUser.builder()
+        .id(15L)
+        .name("user1").build();
+
+    given(accountUserRepository.findById(anyLong()))
+        .willReturn(Optional.of(user));
+
+    given(accountRepository.findFirstByOrderByIdDesc())
+        .willReturn(Optional.empty());
+
+    given(accountRepository.save(any()))
+        .willReturn(Account.builder()
+            .accountUser(user)
+            .accountNumber("1000000013").build());
+
+    ArgumentCaptor<Account> captor = ArgumentCaptor.forClass(Account.class);
+
+    //when
+    AccountDto accountDto = accountService.createAccount(1L, 1000L);
+
+
+    //then
+    verify(accountRepository, times(1)).save(captor.capture());
+    assertEquals(15L, accountDto.getUserId());
+    assertEquals("1000000000", captor.getValue().getAccountNumber());
+  }
+
 }
