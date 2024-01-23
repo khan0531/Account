@@ -34,15 +34,13 @@ public class AccountService {
         .map(account -> String.valueOf(Long.parseLong(account.getAccountNumber()) + 1))
         .orElse("1000000000");
 
-    Account savedAccount = accountRepository.save(Account.builder()
+    return accountRepository.save(Account.builder()
         .accountUser(accountUser)
         .accountStatus(IN_USE)
         .accountNumber(newAccountNumber)
         .balance(initialBalance)
         .registeredAt(LocalDateTime.now())
         .build());
-
-    return savedAccount;
   }
 
   @Transactional
