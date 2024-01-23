@@ -54,13 +54,16 @@ class AccountServiceTest {
             .accountUser(user)
             .accountNumber("1000000013").build());
 
+    ArgumentCaptor<Account> captor = ArgumentCaptor.forClass(Account.class);
+
     //when
     AccountDto accountDto = accountService.createAccount(1L, 1000L);
 
 
     //then
+    verify(accountRepository, times(1)).save(captor.capture());
     assertEquals(12L, accountDto.getUserId());
-    assertEquals("1000000013", accountDto.getAccountNumber());
+    assertEquals("1000000013", captor.getValue().getAccountNumber());
   }
 
 }
