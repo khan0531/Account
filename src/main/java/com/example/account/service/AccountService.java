@@ -31,6 +31,8 @@ public class AccountService {
     AccountUser accountUser = accountUserRepository.findById(userId)
         .orElseThrow(() -> new AccountException(ErrorCode.USER_NOT_FOUND));
 
+    validateCreateAccount(accountUser);
+
     String newAccountNumber = accountRepository.findFirstByOrderByIdDesc()
         .map(account -> String.valueOf(Long.parseLong(account.getAccountNumber()) + 1))
         .orElse("1000000000");
@@ -45,6 +47,12 @@ public class AccountService {
               .registeredAt(LocalDateTime.now())
               .build())
     );
+  }
+
+  private void validateCreateAccount(AccountUser accountUser) {
+    if (accountRepository.countByAccountUser(accountUser) >= 10) {
+      throw new AccountException(ErrorCode.MAX_ACCOUNT_PER_USER_10);
+    }
   }
 
   @Transactional

@@ -3,9 +3,11 @@ package com.example.account.service;
 import com.example.account.domain.Account;
 import com.example.account.domain.AccountUser;
 import com.example.account.dto.AccountDto;
+import com.example.account.exception.AccountException;
 import com.example.account.repository.AccountUserRepository;
 import com.example.account.type.AccountStatus;
 import com.example.account.repository.AccountRepository;
+import com.example.account.type.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -94,6 +96,42 @@ class AccountServiceTest {
     verify(accountRepository, times(1)).save(captor.capture());
     assertEquals(15L, accountDto.getUserId());
     assertEquals("1000000000", captor.getValue().getAccountNumber());
+  }
+
+  @Test
+  @DisplayName("사용자가 없을 때")
+  void createAccount_UserNotFound() {
+    //given
+    given(accountUserRepository.findById(anyLong()))
+        .willReturn(Optional.empty());
+
+    //when
+    AccountException exception = assertThrows(AccountException.class,
+        () -> accountService.createAccount(1L, 1000L));
+
+    //then
+    assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
+  }
+
+  @Test
+  void createAccount_maxAccountIs10() {
+    //given
+    AccountUser user = AccountUser.builder()
+        .id(15L)
+        .name("user1").build();
+
+    given(accountUserRepository.findById(anyLong()))
+        .willReturn(Optional.of(user));
+
+    given(accountRepository.countByAccountUser(any()))
+        .willReturn(10);
+
+    //when
+    AccountException exception = assertThrows(AccountException.class,
+        () -> accountService.createAccount(1L, 1000L));
+
+    //then
+    assertEquals(ErrorCode.MAX_ACCOUNT_PER_USER_10, exception.getErrorCode());
   }
 
 }
