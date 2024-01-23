@@ -44,7 +44,7 @@ public class Account {
   private LocalDateTime updatedAt;
 
   public void useBalance(Long amount) {
-    if (amount < balance) {
+    if (amount > balance) {
       throw new AccountException(AMOUNT_EXCEED_BALANCE);
     }
     balance -= amount;
