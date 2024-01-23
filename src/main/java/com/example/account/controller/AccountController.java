@@ -42,7 +42,7 @@ public class AccountController {
         ));
   }
 
-  @GetMapping("/account?")
+  @GetMapping("/account")
   public List<AccountInfo> getAccountsByUserId(
       @RequestParam("user_id") Long userId) {
     return accountService.getAccountsByUserId(userId)
