@@ -1,5 +1,6 @@
 package com.example.account.controller;
 
+import com.example.account.aop.AccountLock;
 import com.example.account.dto.CancelBalance;
 import com.example.account.dto.QueryTransactionResponse;
 import com.example.account.dto.TransactionDto;
@@ -31,6 +32,7 @@ public class TransactionController {
   private final TransactionService transactionService;
 
   @PostMapping("/transaction/use")
+  @AccountLock
   public UseBalance.Response useBalance(@RequestBody @Valid UseBalance.Request request) {
     TransactionDto transactionDto = transactionService.useBalance(request.getUserId(), request.getAccountNumber(),
         request.getAmount());
@@ -49,6 +51,7 @@ public class TransactionController {
   }
 
   @PostMapping("/transaction/cancel")
+  @AccountLock
   public CancelBalance.Response useBalance(@RequestBody @Valid CancelBalance.Request request) {
     TransactionDto transactionDto = transactionService.cancelBalance(request.getTransactionId(), request.getAccountNumber(),
         request.getAmount());

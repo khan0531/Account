@@ -6,7 +6,6 @@ import com.example.account.dto.CreateAccount.Request;
 import com.example.account.dto.DeleteAccount;
 import com.example.account.type.AccountStatus;
 import com.example.account.service.AccountService;
-import com.example.account.service.RedisTestService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -32,9 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AccountControllerTest {
   @MockBean
   private AccountService accountService;
-
-  @MockBean
-  private RedisTestService redisTestService;
 
   @Autowired
   private MockMvc mockMvc;
