@@ -1,5 +1,6 @@
 package com.example.account.controller;
 
+import com.example.account.dto.CancelBalance;
 import com.example.account.dto.TransactionDto;
 import com.example.account.dto.UseBalance;
 import com.example.account.exception.AccountException;
@@ -27,7 +28,6 @@ public class TransactionController {
 
   @PostMapping("/transaction/use")
   public UseBalance.Response useBalance(@RequestBody @Valid UseBalance.Request request) {
-    log.info("잔액 사용 요청: {}", request);
     TransactionDto transactionDto = transactionService.useBalance(request.getUserId(), request.getAccountNumber(),
         request.getAmount());
     try {
@@ -36,6 +36,24 @@ public class TransactionController {
       log.error("잔액 사용 중 에러 발생", e);
 
       transactionService.saveFailedUseTransaction(
+          request.getAccountNumber(),
+          request.getAmount()
+      );
+
+      throw e;
+    }
+  }
+
+  @PostMapping("/transaction/cancel")
+  public CancelBalance.Response useBalance(@RequestBody @Valid CancelBalance.Request request) {
+    TransactionDto transactionDto = transactionService.cancelBalance(request.getTransactionId(), request.getAccountNumber(),
+        request.getAmount());
+    try {
+      return CancelBalance.Response.from(transactionDto);
+    } catch (AccountException e) {
+      log.error("잔액 사용 중 에러 발생", e);
+
+      transactionService.saveFailedCancelTransaction(
           request.getAccountNumber(),
           request.getAmount()
       );

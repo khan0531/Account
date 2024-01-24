@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.account.dto.CancelBalance;
 import com.example.account.dto.TransactionDto;
 import com.example.account.dto.UseBalance;
 import com.example.account.service.TransactionService;
@@ -59,6 +60,32 @@ class TransactionControllerTest {
         .andExpect(jsonPath("$.transactionResult").value("S"))
         .andExpect(jsonPath("$.transactionId").value("transactionId"))
         .andExpect(jsonPath("$.amount").value(12345L));
+  }
+
+  @Test
+  void successCancelBalance() throws Exception {
+    //given
+    given(transactionService.cancelBalance(anyString(), anyString(), anyLong()))
+        .willReturn(TransactionDto.builder()
+            .accountNumber("1234567890")
+            .transactedAt(LocalDateTime.now())
+            .amount(200000000L)
+            .transactionId("transactionIdForCancel")
+            .transactionResultType(S)
+            .build());
+    //when
+    //then
+    mockMvc.perform(post("/transaction/cancel")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(
+                new CancelBalance.Request("transactionId", "2000000000", 1000L)
+            )))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.accountNumber").value("1234567890"))
+        .andExpect(jsonPath("$.transactionResult").value("S"))
+        .andExpect(jsonPath("$.transactionId").value("transactionIdForCancel"))
+        .andExpect(jsonPath("$.amount").value(200000000L));
 
   }
 }
