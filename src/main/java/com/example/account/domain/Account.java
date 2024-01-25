@@ -9,9 +9,6 @@ import java.time.LocalDateTime;
 import lombok.*;
 
 import javax.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Setter
@@ -19,8 +16,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @Builder
 @Entity
-@EntityListeners(AuditingEntityListener.class) //이거 안하면 @CreatedDate, @LastModifiedDate 안먹음. JpaAuditingConfiguration에서도 해줘야함
-public class Account {
+public class Account extends BaseEntity {
   @Id
   @GeneratedValue
   private Long id;
@@ -37,11 +33,6 @@ public class Account {
 
   private LocalDateTime registeredAt;
   private LocalDateTime unRegisteredAt;
-
-  @CreatedDate
-  private LocalDateTime createdAt;
-  @LastModifiedDate
-  private LocalDateTime updatedAt;
 
   public void useBalance(Long amount) {
     if (amount > balance) {

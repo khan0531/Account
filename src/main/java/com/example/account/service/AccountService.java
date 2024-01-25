@@ -11,7 +11,6 @@ import static com.example.account.type.ErrorCode.USER_NOT_FOUND;
 import com.example.account.domain.Account;
 import com.example.account.domain.AccountUser;
 import com.example.account.dto.AccountDto;
-import com.example.account.dto.AccountInfo;
 import com.example.account.exception.AccountException;
 import com.example.account.repository.AccountRepository;
 import com.example.account.repository.AccountUserRepository;
@@ -38,8 +37,7 @@ public class AccountService {
    */
   @Transactional
   public AccountDto createAccount(Long userId, Long initialBalance) {
-    AccountUser accountUser = accountUserRepository.findById(userId)
-        .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
+    AccountUser accountUser = getAccountUser(userId);
 
     validateCreateAccount(accountUser);
 
@@ -59,6 +57,12 @@ public class AccountService {
     );
   }
 
+  private AccountUser getAccountUser(Long userId) {
+    AccountUser accountUser = accountUserRepository.findById(userId)
+        .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
+    return accountUser;
+  }
+
   private void validateCreateAccount(AccountUser accountUser) {
     if (accountRepository.countByAccountUser(accountUser) >= 10) {
       throw new AccountException(ErrorCode.MAX_ACCOUNT_PER_USER_10);
@@ -75,8 +79,7 @@ public class AccountService {
 
   @Transactional
   public AccountDto deleteAccount(Long userId, String accountNumber) {
-    AccountUser accountUser = accountUserRepository.findById(userId)
-        .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
+    AccountUser accountUser = getAccountUser(userId);
     Account account = accountRepository.findByAccountNumber(accountNumber)
         .orElseThrow(() -> new AccountException(ACCOUNT_NOT_FOUND));
 
@@ -104,8 +107,7 @@ public class AccountService {
 
   @Transactional
   public List<AccountDto> getAccountsByUserId(Long userId) {
-    AccountUser accountUser = accountUserRepository.findById(userId)
-        .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
+    AccountUser accountUser = getAccountUser(userId);
 
     List<Account> accounts = accountRepository
         .findByAccountUser(accountUser);

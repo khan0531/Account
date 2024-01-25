@@ -1,13 +1,10 @@
 package com.example.account.domain;
 
 import java.time.LocalDateTime;
-import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
+import javax.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,12 +16,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@Entity
-public class AccountUser extends BaseEntity {
-  @Id
-  @GeneratedValue
-  private Long id;
+@MappedSuperclass // 이거 안하면 BaseEntity를 상속받은 Account에서 컬럼이 안생김
+@EntityListeners(AuditingEntityListener.class) //이거 안하면 @CreatedDate, @LastModifiedDate 안먹음.
+public class BaseEntity {
 
-  private String name;
+  @CreatedDate
+  private LocalDateTime createdAt;
+  @LastModifiedDate
+  private LocalDateTime updatedAt;
 }
